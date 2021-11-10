@@ -13,6 +13,7 @@
 #include "arch_spec.h"
 #include "msr.h"
 #include "utils.h"
+#include <locale.h>
 
 static rapl_msr_parameter* parameters = NULL; // what is a rapl_msr_parameter?
 static int* msr_fds = NULL;
@@ -202,6 +203,7 @@ void energy_measurement_csv_header(char csv_header[512]) { energy_info_csv_heade
 void
 energy_stat_csv_string(energy_stat_t energy_stat_per_socket[], char* csv_string) {
 	int offset = 0;
+	char* prevLocale = setlocale(LC_ALL,"en_US.utf8");
 	for (int i = 0; i < num_sockets; i++) {
 		switch (power_domains_supported) {
 			case DRAM_GPU_CORE_PKG:
@@ -234,11 +236,13 @@ energy_stat_csv_string(energy_stat_t energy_stat_per_socket[], char* csv_string)
 		csv_string+offset, "%ld",
 		energy_stat_per_socket[0].timestamp
 	);
+	setlocale(LC_ALL, prevLocale);
 }
 
 void
 energy_measurement_csv_string(energy_measurement_t energy_measurement_per_socket[], char* csv_string) {
 	int offset = 0;
+	char* prevLocale = setlocale(LC_ALL,"en_US.utf8");
 	for (int i = 0; i < num_sockets; i++) {
 		switch (power_domains_supported) {
 			case DRAM_GPU_CORE_PKG:
@@ -272,4 +276,5 @@ energy_measurement_csv_string(energy_measurement_t energy_measurement_per_socket
 		energy_measurement_per_socket[0].start_timestamp,
 		energy_measurement_per_socket[0].time_elapsed
 	);
+	setlocale(LC_ALL,prevLocale);
 }
